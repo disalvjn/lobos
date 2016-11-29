@@ -1,4 +1,4 @@
-(defproject lobos "1.0.0-beta3"
+(defproject disalvjn/lobos "1.0.0-beta3"
   :description
   "A library to create and manipulate SQL database schemas."
   :url "http://budu.github.com/lobos/"
@@ -18,4 +18,5 @@
                [com.h2database/h2 "1.3.160"]]}}
   :aliases {"all" ["with-profile" "dev:dev,1.3"]}
   :jar-exclusions [#"www.clj" #"config.clj" #"migrations.clj"]
+  :deploy-repositories [["clojars" {:sign-releases false}]]
   :min-lein-version "2.0.0")

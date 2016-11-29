@@ -163,6 +163,6 @@
         (as-sql-keyword otype)
         (as-identifier db-spec oname)))))
 
-(defmethod compile [:sqlite AlterTableStatement]
-  [statement]
-  (unsupported "Alter statement unsupported."))
+;; (defmethod compile [:sqlite AlterTableStatement]
+;;   [statement]
+;;   (unsupported "Alter statement unsupported."))
