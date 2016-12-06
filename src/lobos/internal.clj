@@ -40,9 +40,15 @@
   the `debug-level` is set to `:sql`."
   [sql]
   (doseq [sql-string (if (seq? sql) sql [sql])]
-    (when (= :sql @debug-level) (println sql-string))
-    (with-open [stmt (.createStatement (conn/connection))]
-      (.execute stmt sql-string))))
+    ;; why split lines? the original author made SQL statements monoidal
+    ;; by defining concatenation to be #(str %1 "\n" %2). But SQL Server
+    ;; doesn't like this... so rather than changing all the (join "\n" ...)'s
+    ;; to build up a list of statements, I'm just splitting here. What could go wrong?
+    (doseq [sql-string' (clojure.string/split-lines sql-string)]
+      (when (= :sql @debug-level) (println sql-string'))
+      ;; (println sql-string')
+      (with-open [stmt (.createStatement (conn/connection))]
+        (.execute stmt sql-string')))))
 
 (defn execute
   "Executes the given statement(s) using the specified connection
