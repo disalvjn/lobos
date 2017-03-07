@@ -9,7 +9,8 @@
 (ns lobos.backends.sqlite
   "Compiler implementation for SQLite."
   (:refer-clojure :exclude [compile defonce])
-  (:require (lobos [schema :as schema]))
+  (:require (lobos [schema :as schema])
+            [clojure.string :as str])
   (:use (lobos analyzer compiler connectivity internal metadata utils))
   (:import (lobos.ast AlterTableStatement
                       AutoIncClause
@@ -126,12 +127,21 @@
 
 (defmethod compile [:sqlite DataTypeClause]
   [expression]
+  (prn expression)
   (let [{:keys [dtype args options]} expression
-        {:keys [collate time-zone]} options]
-    (unsupported (and (#{:decimal :numeric} dtype) (= (count args) 2))
+        {:keys [collate time-zone]} options
+
+        ;; SQLite doesn't have the idea of VARCHAR(MAX), which
+        ;; is SQL Server's replacement for the now-deprecated clob,
+        ;; which we're forced to use if we want to check equality.
+        ;; so, do this incredibly hacky thing, because what's the alternative?
+        fixed-dtype (if (= (str/upper-case dtype) "VARCHAR(MAX)")
+                       "VARCHAR(1024)"
+                       dtype)]
+    (unsupported (and (#{:decimal :numeric} fixed-dtype) (= (count args) 2))
       "Doesn't support scale argument.")
     (join \space
-      (str (as-sql-keyword dtype) (as-list args))
+      (str (as-sql-keyword fixed-dtype) (as-list args))
       (when collate (str "COLLATE " (as-str collate)))
       (when time-zone "WITH TIME ZONE"))))
 
