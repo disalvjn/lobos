@@ -1,4 +1,4 @@
-(defproject disalvjn/lobos "1.0.2-beta3"
+(defproject disalvjn/lobos "1.0.3-beta3"
   :description
   "A library to create and manipulate SQL database schemas."
   :url "http://budu.github.com/lobos/"

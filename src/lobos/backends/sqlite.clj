@@ -127,7 +127,6 @@
 
 (defmethod compile [:sqlite DataTypeClause]
   [expression]
-  (prn expression)
   (let [{:keys [dtype args options]} expression
         {:keys [collate time-zone]} options
 
